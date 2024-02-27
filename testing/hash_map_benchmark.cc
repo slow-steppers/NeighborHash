@@ -1,42 +1,49 @@
-#include <cstddef>
-#include <cstdint>
-#include <fstream>
-#include <cstdlib>
-#include <limits>
-#include <iostream>
-#include <unordered_map>
-#include <vector>
-#include <random>
-#include <benchmark/benchmark.h>
+#include <stddef.h>                                // for size_t, NULL, ptrd...
+#include <stdint.h>                                // for uint64_t, int64_t
+#include <stdlib.h>                                // for abort
+#include <sys/time.h>                              // for gettimeofday, timeval
 
-#include "absl/random/random.h"
-#include "absl/strings/str_format.h"
-#include "absl/container/flat_hash_map.h"
+#include <algorithm>                               // for max, sort, shuffle
+#include <fstream>                                 // for ifstream
+#include <functional>                              // for equal_to
+#include <initializer_list>                        // for initializer_list
+#include <iostream>                                // for operator<<, basic_...
+#include <iterator>                                // for forward_iterator_tag
+#include <limits>                                  // for numeric_limits
+#include <random>                                  // for seed_seq, mt19937
+#include <string>                                  // for string
+#include <unordered_map>                           // for unordered_map, ope...
+#include <utility>                                 // for pair
+#include <vector>                                  // for vector, allocator
 
-#include "ankerl/unordered_dense.h"
+#include "absl/base/prefetch.h"                    // for ABSL_HAVE_PREFETCH
+#include "absl/container/flat_hash_map.h"          // for flat_hash_map, ope...
+#include "absl/hash/hash.h"                        // for Hash
+#include "absl/random/uniform_int_distribution.h"  // for uniform_int_distri...
+#include "absl/random/zipf_distribution.h"         // for zipf_distribution
+#include "absl/strings/str_format.h"               // for StrFormat
+#include "ankerl/unordered_dense.h"                // for map, standard, hash
+#include "benchmark/benchmark.h"                   // for Benchmark, BENCHMA...
+#include "bytell_hash_map.hpp"                     // for bytell_hash_map
+#include "hash_table7.hpp"                         // for HashMap
+#include "tsl/hopscotch_hash.h"                    // for operator!=
+#include "tsl/hopscotch_map.h"                     // for hopscotch_map
 
-#include "neighbor_hash/neighbor_hash.h"
-#include "neighbor_hash/linear_probing.h"
+#include "neighbor_hash/common_policy.h"           // for DefaultPolicy
+#include "neighbor_hash/linear_probing.h"          // for LinearProbingHashMap
+#include "neighbor_hash/neighbor_hash.h"           // for NeighborHashMap
 
 #ifdef NEIGHBOR_HASH_SIMD_FIND
 #include "neighbor_hash/bucketing_simd.h"
 #endif
 
-#include "neighbor_hash/common_policy.h"
-
 #ifdef BENCHMARK_CUCKOO_HASHMAP
-#include <libcuckoo/cuckoohash_map.hh>
+#include "libcuckoo/cuckoohash_map.hh"
 #endif // BENCHMARK_CUCKOO_HASHMAP
-
-#include "bytell_hash_map.hpp"
-
-#include "hash_table7.hpp"
 
 #ifdef BENCHMARK_BOOST_FLAT_MAP
 #include "boost/unordered/unordered_flat_map.hpp"
 #endif
-
-#include "tsl/hopscotch_map.h"
 
 using namespace neighbor;
 

@@ -1,14 +1,19 @@
-#include <random>
-#include <cstdlib>
-#include <algorithm>
-#include <unordered_map>
-#include <iostream>
-#include <cstddef>
-#include <cstdint>
+#include <stdint.h>                       // for uint32_t, uint64_t, int64_t
+#include <stdlib.h>                       // for size_t, aligned_alloc, free
 
-#include <gtest/gtest.h>
-#include "neighbor_hash/neighbor_hash.h"
-#include "neighbor_hash/common_policy.h"
+#include <algorithm>                      // for max
+#include <map>                            // for map, operator!=, _Rb_tree_i...
+#include <random>                         // for uniform_int_distribution
+#include <set>                            // for set
+#include <tuple>                          // for tuple
+#include <unordered_map>                  // for unordered_map, operator!=
+#include <utility>                        // for pair
+#include <vector>                         // for allocator, vector
+
+#include "gtest/gtest.h"                  // for Message, TestPartResult
+
+#include "neighbor_hash/neighbor_hash.h"  // for NeighborHashMap, operator!=
+#include "neighbor_hash/slot_type.h"      // for neighbor
 
 using namespace neighbor;
 

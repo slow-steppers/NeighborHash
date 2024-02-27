@@ -26,28 +26,31 @@ cc_test(
     ],
 )
 
-cc_binary(
-    name = "mixed_multi_threading",
-    srcs = ["mixed_multi_threading.cc"],
-    deps = [
-        "//:neighbor_hash",  # Reference your header library target
-        "@com_google_absl//absl/container:flat_hash_map",
-        "@com_google_absl//absl/random",
-        "@com_google_absl//absl/strings:str_format",
-        "@folly",
-    ],
-)
-
 cc_test(
     name = "ankerl_bench",
     srcs = ["ankerl_bench.cc"],
-    copts = ["-Iexternal/doctest/doctest"],
+    copts = [
+        "-Iexternal/doctest/doctest",
+        "-DDOCTEST_CONFIG_IMPLEMENT_WITH_MAIN",
+    ],
     deps = [
-        "//:neighbor_hash",  # Reference your header library target
+        "//:neighbor_hash",
         "@ankerl_unordered_dense//:bench",
         "@ankerl_unordered_dense//:unordered_dense",
         "@com_google_absl//absl/container:flat_hash_map",
         "@com_google_absl//absl/random",
         "@com_google_absl//absl/strings:str_format",
+    ],
+)
+
+cc_binary(
+    name = "mixed_multi_threading",
+    srcs = ["mixed_multi_threading.cc"],
+    deps = [
+        "//:neighbor_hash",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_absl//absl/random",
+        "@com_google_absl//absl/strings:str_format",
+        "@folly",
     ],
 )

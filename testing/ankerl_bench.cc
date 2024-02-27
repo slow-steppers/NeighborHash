@@ -1,24 +1,27 @@
+#include <stddef.h>                        // for size_t
+#include <stdint.h>                        // for uint64_t
+
+#include <array>                           // for array
+#include <chrono>                          // for duration, operator-, stead...
+#include <deque>                           // for operator+, operator!=
+#include <functional>                      // for equal_to
+#include <unordered_map>                   // for unordered_map, operator!=
+#include <vector>                          // for allocator, vector
+
+#include "absl/container/flat_hash_map.h"  // for flat_hash_map, operator!=
+#include "ankerl/unordered_dense.h"        // for standard, map, hash
+#include "app/doctest.h"                   // for TEST_CASE_MAP
+#include "app/name_of_type.h"              // for name_of_type
+#include "doctest.h"                       // for TestCase, instantiationHelper
+#include "fmt/core.h"                      // for format, print
+#include "third-party/nanobench.h"         // for Rng
+
+#include "neighbor_hash/common_policy.h"   // for DefaultPolicy
+#include "neighbor_hash/neighbor_hash.h"   // for operator!=, NeighborHashMap
+
+
+
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-
-#include <ankerl/unordered_dense.h> // for map
-
-#include <app/name_of_type.h>      // for name_of_type
-#include <third-party/nanobench.h> // for Rng
-
-#include <app/doctest.h> // for TestCase, skip, ResultBuilder
-#include <fmt/core.h>    // for format, print
-
-#include "neighbor_hash/neighbor_hash.h"
-#include "neighbor_hash/common_policy.h"
-
-#include "absl/container/flat_hash_map.h"
-
-#include <algorithm>     // for fill_n
-#include <array>         // for array
-#include <chrono>        // for duration, operator-, steady_clock
-#include <cstddef>       // for size_t
-#include <unordered_map> // for unordered_map, operator!=
-#include <vector>        // for vector
 
 template <typename Map>
 void bench() {
