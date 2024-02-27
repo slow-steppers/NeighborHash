@@ -9,14 +9,10 @@ http_archive(
 
 http_archive(
     name = "com_github_storypku_rules_folly",
-    patches = [
-        "//third_party:rules_folly.patch",
-    ],
+    patches = ["//third_party:rules_folly.patch"],
     sha256 = "16441df2d454a6d7ef4da38d4e5fada9913d1f9a3b2015b9fe792081082d2a65",
     strip_prefix = "rules_folly-0.2.0",
-    urls = [
-        "https://github.com/storypku/rules_folly/archive/v0.2.0.tar.gz",
-    ],
+    urls = ["https://github.com/storypku/rules_folly/archive/v0.2.0.tar.gz"],
 )
 
 load("@com_github_storypku_rules_folly//bazel:folly_deps.bzl", "folly_deps")
@@ -25,14 +21,10 @@ folly_deps()
 
 http_archive(
     name = "com_github_nelhage_rules_boost",
-    patches = [
-        "//third_party:rules_boost.patch",
-    ],
+    patches = ["//third_party:rules_boost.patch"],
     sha256 = "046f774b185436d506efeef8be6979f2c22f1971bfebd0979bafa28088bf28d0",
     strip_prefix = "rules_boost-fb9f3c9a6011f966200027843d894923ebc9cd0b",
-    urls = [
-        "https://github.com/nelhage/rules_boost/archive/fb9f3c9a6011f966200027843d894923ebc9cd0b.tar.gz",
-    ],
+    urls = ["https://github.com/nelhage/rules_boost/archive/fb9f3c9a6011f966200027843d894923ebc9cd0b.tar.gz"],
 )
 
 load("@com_github_nelhage_rules_boost//:boost/boost.bzl", "boost_deps")

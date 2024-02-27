@@ -1,8 +1,7 @@
 #pragma once
 
-#include <memory>
-#include <vector>
-#include <iterator>
+#include <type_traits>
+#include <utility>
 
 namespace neighbor {
 namespace detail {

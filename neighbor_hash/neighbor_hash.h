@@ -1,32 +1,32 @@
 #pragma once
 
+#include <stddef.h>
+#include <stdint.h>
+
+#include <algorithm>
+#include <atomic>
+#include <iostream>
+#include <iterator>
+#include <map>
 #include <new>
 #include <set>
-#include <map>
-#include <atomic>
-#include <sys/types.h>
+#include <tuple>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 #include "absl/base/prefetch.h"
+
+#include "neighbor_hash/slot_type.h"
 
 #ifdef NEIGHBOR_HASH_SIMD_FIND
 #include <xmmintrin.h>
 #include <immintrin.h>
 #endif  // NEIGHBOR_HASH_SIMD_FIND
 
-#include <iostream>
-#include <memory>
-#include <vector>
-#include <iterator>
-#include <utility>
-#include <cstddef>
-#include <cstdint>
-#include <type_traits>
-
 #ifdef NEIGHBOR_HASH_COROUTINE_FIND
 #include <coroutine>
 #endif  // NEIGHBOR_HASH_COROUTINE_FIND
-
-#include "neighbor_hash/slot_type.h"
 
 namespace neighbor {
 

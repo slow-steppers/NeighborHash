@@ -1,15 +1,15 @@
 #pragma once
 
-#include <cstdint>
-#include <unistd.h>
+#include <stdint.h>
+#include <stdlib.h>
 #include <sys/mman.h>
-#include <fcntl.h>
+
+#include <algorithm>
+#include <tuple>
 
 #ifdef NEIGHBOR_HASH_SIMD_FIND
 #include <immintrin.h>
 #endif  // NEIGHBOR_HASH_SIMD_FIND
-
-#include "absl/container/flat_hash_map.h"
 
 namespace neighbor {
 namespace policy {

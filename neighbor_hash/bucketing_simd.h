@@ -1,19 +1,22 @@
 #pragma once
 
-#include "absl/base/macros.h"
+#include <stdlib.h>
+#include <stddef.h>
+#include <stdint.h>
+
+#include <algorithm>
+#include <iostream>
+#include <iterator>
+#include <map>
+#include <set>
+#include <utility>
+
+#include "absl/base/optimization.h"
 #include "absl/base/prefetch.h"
 
-#include <set>
-#include <map>
-#include <cstddef>
-#include <xmmintrin.h>
+#include <emmintrin.h>
 #include <immintrin.h>
-
-#include <iostream>
-#include <array>
-#include <cstdint>
-#include <utility>
-#include <algorithm>
+#include <xmmintrin.h>
 
 namespace neighbor {
 

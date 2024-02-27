@@ -8,4 +8,8 @@ cc_library(
         "neighbor_hash/slot_type.h",
     ],
     visibility = ["//visibility:public"],
+    deps = [
+        "@com_google_absl//absl/base:core_headers",
+        "@com_google_absl//absl/base:prefetch",
+    ],
 )

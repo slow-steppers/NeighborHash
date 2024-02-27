@@ -1,12 +1,18 @@
 #pragma once
 
+#include <stddef.h>
+#include <stdlib.h>
+#include <stdint.h>
+
 #include <iostream>
-#include <cstdint>
+#include <iterator>
 #include <map>
+#include <new>
 #include <set>
-#include <memory>
+#include <utility>
 
 #include "absl/base/prefetch.h"
+
 #include "neighbor_hash/slot_type.h"
 
 namespace neighbor {
