@@ -19,10 +19,6 @@
 #include "neighbor_hash/common_policy.h"   // for DefaultPolicy
 #include "neighbor_hash/neighbor_hash.h"   // for operator!=, NeighborHashMap
 
-
-
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-
 template <typename Map>
 void bench() {
     static constexpr size_t num_total = 4;

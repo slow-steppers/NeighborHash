@@ -1,4 +1,4 @@
-# neighbor_hash_map
+# neighbor\_hash\_map
 
 This repo contains codes and steps necessary to reproduce the artifacts for our paper titled **NeighborHash : A Faster HashTable and Key-Value Store Serving in Recommendation System**
 
@@ -8,9 +8,9 @@ We conducted tests in the paper using Intel 5218 CPUs. In fact, any hardware tha
 
 ## Software Requirements
 
-* linux x86_64 >= 4.9.0
+* linux x86\_64 >= 4.9.0
 * Hugepage (2 GiB) support
-* gcc >= 11.4.0 or clang >= 16.800.6
+* clang >= 16.0.6 or gcc >= 11.4.0
 * Bazel >= 6.3.0
 
 ## Build benchmark
