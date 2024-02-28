@@ -2,16 +2,6 @@
 
 set -eu
 
-ls -l /usr/bin/g++*
-ls -l /usr/bin/clang++*
-
-dpkg -l | fgrep libstdc++
-
-
-
-
-exit
-
 ABSOLUTE_ME="$(realpath "${0}")"
 PROJECT_DIR="$(dirname "${ABSOLUTE_ME}")"
 
@@ -39,8 +29,8 @@ if lscpu | grep -iq "avx512"; then
   ARGUMENTS+=( --config="neighbor_simd" )
 fi
 
-if [ "$(type -t "clang")" == "file" ]; then
-  ARGUMENTS+=( --config="clang" )
-fi
+# if [ "$(type -t "clang")" == "file" ]; then
+#   ARGUMENTS+=( --config="clang" )
+# fi
 
 exec "${BAZEL_BINARY}" build "${ARGUMENTS[@]}" "//testing:all" "${@}"
