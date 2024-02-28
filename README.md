@@ -33,12 +33,12 @@ numactl --membind=0 --cpunodebind=0 ./bazel-bin/testing/hash_map_benchmark --ben
 
 We have integrated the following components into our benchmark:
 - `NeighborHash`
-- `std::unordered\_map`
+- `std::unordered_map`
 - `LinearProbing`
 - `BucketingSIMD_16x16`
-- `ankerl::unordered\_dense::map`
-- `absl::flat\_hash\_map`
-- `ska::bytell\_hash\_map`
+- `ankerl::unordered_dense::map`
+- `absl::flat_hash_map`
+- `ska::bytell_hash_map`
 - `emhash7::HashMap`
 - `tsl::hopscotch_map`
 - Native array (Random Access)
