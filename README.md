@@ -32,16 +32,16 @@ numactl --membind=0 --cpunodebind=0 ./bazel-bin/testing/hash_map_benchmark --ben
 
 
 We have integrated the following components into our benchmark:
-- NeighborHash
-- std::unordered\_map
-- LinearProbing
-- BucketingSIMD_16x16
-- ankerl::unordered\_dense::map
-- absl::flat\_hash\_map
-- ska::bytell\_hash\_map
-- emhash7::HashMap
-- tsl::hopscotch_map
-- Array (Random Access)
+- `NeighborHash`
+- `std::unordered\_map`
+- `LinearProbing`
+- `BucketingSIMD_16x16`
+- `ankerl::unordered\_dense::map`
+- `absl::flat\_hash\_map`
+- `ska::bytell\_hash\_map`
+- `emhash7::HashMap`
+- `tsl::hopscotch_map`
+- Native array (Random Access)
 
 
 For ease of comparison, we have categorized each hashmap into the following classes: Scalar, IntraVec, Vec, MultiThreading.
