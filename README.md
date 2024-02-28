@@ -1,5 +1,9 @@
 # neighbor\_hash\_map
 
+[![build-and-test](https://github.com/google/benchmark/workflows/build-and-test/badge.svg)](https://github.com/slow-steppers/NeighborHash/actions?query=workflow%3Abuild)
+
+----
+
 This repo contains codes and steps necessary to reproduce the artifacts for our paper titled **NeighborHash : A Faster HashTable and Key-Value Store Serving in Recommendation System**
 
 ## Setting up the hardware
