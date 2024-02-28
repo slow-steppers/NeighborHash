@@ -17,7 +17,8 @@ We conducted tests in the paper using Intel 5218 CPUs. In fact, any hardware tha
 
 ```bash
 git clone https://github.com/slow-steppers/NeighborHash
-cd NeighborHash && bazel build -c opt --config neighbor_hugepage --config neighbor_simd testing:all
+cd NeighborHash
+bazel build -c opt --config=neighbor_hugepage --config=neighbor_simd //testing:all
 ```
 
 ## Run benchmarks
