@@ -1,6 +1,6 @@
 # neighbor\_hash\_map
 
-[![build-and-test](https://github.com/slow-steppers/NeighborHash/workflows/build-and-test/badge.svg)](https://github.com/slow-steppers/NeighborHash/actions?query=workflow%3Abuild)
+[![build-and-test](https://github.com/slow-steppers/NeighborHash/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/slow-steppers/NeighborHash/actions?query=workflow%3Abuild)
 
 ----
 
