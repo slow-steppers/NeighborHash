@@ -2,6 +2,16 @@
 
 set -eu
 
+ls -l /usr/bin/g++*
+ls -l /usr/bin/clang++*
+
+dpkg -l | fgrep libstdc++
+
+
+
+
+exit
+
 ABSOLUTE_ME="$(realpath "${0}")"
 PROJECT_DIR="$(dirname "${ABSOLUTE_ME}")"
 
