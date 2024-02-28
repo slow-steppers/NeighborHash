@@ -10,7 +10,7 @@ cd -P "${PROJECT_DIR}"
 NEED_DOWNLOAD_BAZEL="1"
 if [ "$(type -t "bazel")" == "file" ]; then
   SYSTEM_BAZEL_VERSION="$(bazel --version | head -n "1" | sed -n 's/^.*\s\+\(\([0-9]\+\.\)\+[0-9]\+[a-z]\?\)\(\s\+.*\)\?\s*$/\1/p')"
-  if [ "$(echo -ne "${SYSTEM_BAZEL_VERSION}\n6.3.0\n" | sort -V | head -n "1")" == "6.4.0" ]; then
+  if [ "$(echo -ne "${SYSTEM_BAZEL_VERSION}\n6.3.0\n" | sort -V | head -n "1")" == "6.3.0" ]; then
     NEED_DOWNLOAD_BAZEL="0"
   fi
 fi
@@ -23,7 +23,11 @@ if [ "${NEED_DOWNLOAD_BAZEL}" -ne "0" ]; then
   BAZEL_BINARY="bin/bazel"
 fi
 
-ARGUMENTS=( --config="neighbor_hugepage" --config="neighbor_simd" )
+ARGUMENTS=( --config="neighbor_hugepage" )
+
+if lscpu | grep -iq "avx512"; then
+  ARGUMENTS+=( --config="neighbor_simd" )
+fi
 
 if [ "$(type -t "clang")" == "file" ]; then
   ARGUMENTS+=( --config="clang" )
