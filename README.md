@@ -16,7 +16,7 @@ We conducted tests in the paper using Intel 5218 CPUs. In fact, any hardware tha
 ## Software Requirements
 
 * linux x86\_64 >= 4.9.0
-* Hugepage (2 GiB) support
+* Hugepage (2 MiB) support
 * clang >= 16.0.6 or gcc >= 11.4.0
 * Bazel >= 6.3.0
 
