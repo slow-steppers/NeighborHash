@@ -1,6 +1,9 @@
 # neighbor\_hash\_map
 
 [![build](https://github.com/slow-steppers/NeighborHash/actions/workflows/c-cpp.yml/badge.svg)](https://github.com/slow-steppers/NeighborHash/actions?query=workflow%3Abuild)
+[![release](https://img.shields.io/github/v/release/slow-steppers/NeighborHash)](https://github.com/slow-steppers/NeighborHash/releases/latest)
+[![issues](https://img.shields.io/github/issues/slow-steppers/NeighborHash?color=yellow)](https://github.com/slow-steppers/NeighborHash/issues?q=is%3Aopen+is%3Aissue)
+[![license](https://img.shields.io/github/license/slow-steppers/NeighborHash)](https://github.com/slow-steppers/NeighborHash/blob/master/LICENSE)
 
 ----
 
