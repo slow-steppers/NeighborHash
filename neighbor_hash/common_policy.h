@@ -68,7 +68,7 @@ struct DefaultPolicy {
   static void Deallocate(void* ptr, size_t size) {
     munmap(ptr, size);
   }
-#else  // NEIGHBOR_HASH_SIMD_FIND
+#else  // NEIGHBOR_HASH_HUGEPAGE
   template <size_t alignment = 64>
   static void* Allocate(size_t size) {
     auto* p = std::aligned_alloc(alignment, (size + alignment - 1) / alignment * alignment);
@@ -77,7 +77,7 @@ struct DefaultPolicy {
   static void Deallocate(void* ptr, size_t) {
     free(ptr);
   }
-#endif  // NEIGHBOR_HASH_SIMD_FIND
+#endif  // NEIGHBOR_HASH_HUGEPAGE
 
   using Hash = DefaultIntegerHash;
 
