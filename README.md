@@ -7,7 +7,7 @@
 
 ----
 
-This repo contains codes and steps necessary to reproduce the artifacts for our paper titled **NeighborHash : A Faster HashTable and Key-Value Store Serving in Recommendation System**
+This repo contains codes and steps necessary to reproduce the artifacts for research paper titled **NeighborHash : A Faster HashTable and Key-Value Store Serving in Recommendation System**
 
 ## Setting up the hardware
 
