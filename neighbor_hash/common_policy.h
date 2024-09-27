@@ -39,6 +39,7 @@ struct DefaultIntegerHash {
 template <class K, class V>
 struct DefaultPolicy {
   static constexpr size_t kPayloadBitCount = sizeof(V) * 8 - 12;
+  static constexpr size_t kHugePageSize = 2UL * 1024 * 1024;
 
   static size_t NormalizeCapacity(size_t n) {
     size_t power = 1;
@@ -57,16 +58,21 @@ struct DefaultPolicy {
   }
 
 #ifdef NEIGHBOR_HASH_HUGEPAGE
+  static size_t round_to_huge_page_size(size_t n) {
+    return (((n - 1) / kHugePageSize) + 1) * kHugePageSize;
+  }
+
   template <size_t alignment = 64>
   static void* Allocate(size_t size) {
-    void* addr = mmap(0, size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
+    void* addr = mmap(0, round_to_huge_page_size(size), PROT_READ | PROT_WRITE,
+                      MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
     if (addr == MAP_FAILED) { abort(); }
     // std::cout << "Returned address is:" << addr << " size:" << size << std::endl;
     return addr;
   }
 
   static void Deallocate(void* ptr, size_t size) {
-    munmap(ptr, size);
+    munmap(ptr, round_to_huge_page_size(size));
   }
 #else  // NEIGHBOR_HASH_HUGEPAGE
   template <size_t alignment = 64>
