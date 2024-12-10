@@ -1,16 +1,16 @@
-#include <stdint.h>                       // for uint32_t, uint64_t, int64_t
-#include <stdlib.h>                       // for size_t, aligned_alloc, free
+#include <stdint.h>  // for uint32_t, uint64_t, int64_t
+#include <stdlib.h>  // for size_t, aligned_alloc, free
 
-#include <algorithm>                      // for max
-#include <map>                            // for map, operator!=, _Rb_tree_i...
-#include <random>                         // for uniform_int_distribution
-#include <set>                            // for set
-#include <tuple>                          // for tuple
-#include <unordered_map>                  // for unordered_map, operator!=
-#include <utility>                        // for pair
-#include <vector>                         // for allocator, vector
+#include <algorithm>      // for max
+#include <map>            // for map, operator!=, _Rb_tree_i...
+#include <random>         // for uniform_int_distribution
+#include <set>            // for set
+#include <tuple>          // for tuple
+#include <unordered_map>  // for unordered_map, operator!=
+#include <utility>        // for pair
+#include <vector>         // for allocator, vector
 
-#include "gtest/gtest.h"                  // for Message, TestPartResult
+#include "gtest/gtest.h"  // for Message, TestPartResult
 
 #include "neighbor_hash/neighbor_hash.h"  // for NeighborHashMap, operator!=
 #include "neighbor_hash/slot_type.h"      // for neighbor
@@ -33,18 +33,14 @@ struct TestPolicyTraits {
     return size >= capactiy * 0.9;
   }
 
-  static size_t GrowthSize(size_t n) {
-    return std::max(n * 2, 1024UL);
-  }
+  static size_t GrowthSize(size_t n) { return std::max(n * 2, 1024UL); }
 
   template <size_t alignment = 64>
   static void* Allocate(size_t size) {
     return std::aligned_alloc(alignment, size);
   }
 
-  static void Deallocate(void* ptr, size_t) {
-    free(ptr);
-  }
+  static void Deallocate(void* ptr, size_t) { free(ptr); }
 
   using Hash = std::hash<K>;
 
@@ -55,10 +51,10 @@ struct TestPolicyTraits {
   };
 };
 
-
 template <class K, class V, size_t NumGroupBits = 0>
 struct TestMultiGroupPolicyTraits : public TestPolicyTraits<K, V> {
-  static std::tuple<int64_t, int64_t> SubRange(int64_t head_slot_index, size_t capacity) {
+  static std::tuple<int64_t, int64_t> SubRange(
+      int64_t head_slot_index, size_t capacity) {
     size_t per_group_size = capacity >> NumGroupBits;
     size_t bits = __builtin_ctz(per_group_size) + 1;
     int64_t start = (head_slot_index >> bits) << bits;
@@ -81,14 +77,16 @@ using MyPolicyTraits = TestPolicyTraits<uint32_t, uint32_t>;
 
 TEST_F(PayloadProxyTest, DefaultValue) {
   NeighborHashMap<uint32_t, uint32_t, MyPolicyTraits> hashmap;
-  NeighborHashMap<uint32_t, uint32_t, MyPolicyTraits>::payload_proxy_type payload;
+  NeighborHashMap<uint32_t, uint32_t, MyPolicyTraits>::payload_proxy_type
+      payload;
 
   // Test that the default value of a payload is 0
   ASSERT_EQ(static_cast<uint32_t>(payload), 0);
 }
 
 TEST_F(PayloadProxyTest, Assignment) {
-  NeighborHashMap<uint32_t, uint32_t, MyPolicyTraits>::payload_proxy_type payload;
+  NeighborHashMap<uint32_t, uint32_t, MyPolicyTraits>::payload_proxy_type
+      payload;
 
   payload = 42;
 
@@ -97,7 +95,8 @@ TEST_F(PayloadProxyTest, Assignment) {
 }
 
 TEST_F(PayloadProxyTest, Masking) {
-  NeighborHashMap<uint32_t, uint32_t, MyPolicyTraits>::payload_proxy_type payload;
+  NeighborHashMap<uint32_t, uint32_t, MyPolicyTraits>::payload_proxy_type
+      payload;
   payload = 0x12345678;
 
   // Test that the payload only stores the lower bits
@@ -105,7 +104,8 @@ TEST_F(PayloadProxyTest, Masking) {
 }
 
 TEST_F(PayloadProxyTest, ImplicitConversion) {
-  NeighborHashMap<uint32_t, uint32_t, MyPolicyTraits>::payload_proxy_type payload;
+  NeighborHashMap<uint32_t, uint32_t, MyPolicyTraits>::payload_proxy_type
+      payload;
   payload = 0x12345678;
 
   // Test that the payload only stores the lower bits
@@ -136,7 +136,7 @@ TEST_F(NeighborHashMapTest, InsertAndFind) {
 TEST_F(NeighborHashMapTest, InsertDuplicate) {
   map.insert(42, 100);
   auto result = map.insert(42, 200);  // Attempt to insert a duplicate key
-  EXPECT_FALSE(result.second);  // Insertion should fail
+  EXPECT_FALSE(result.second);        // Insertion should fail
 
   auto found = map.find(42);
   EXPECT_NE(found, map.end());
@@ -218,14 +218,14 @@ TEST_F(NeighborHashMapTest, Clear) {
   map.insert(123, 200);
   ASSERT_EQ(map.size(), 2);
 
-  map.clear(); // Clear the hashmap
+  map.clear();  // Clear the hashmap
   ASSERT_EQ(map.size(), 0);
 
-  auto found1 = map.find(42); // Try to find the first key
-  auto found2 = map.find(123); // Try to find the second key
+  auto found1 = map.find(42);   // Try to find the first key
+  auto found2 = map.find(123);  // Try to find the second key
 
-  ASSERT_EQ(found1, map.end()); // First key should not be found
-  ASSERT_EQ(found2, map.end()); // Second key should not be found
+  ASSERT_EQ(found1, map.end());  // First key should not be found
+  ASSERT_EQ(found2, map.end());  // Second key should not be found
 }
 
 TEST_F(NeighborHashMapTest, RandomInsert) {
@@ -276,11 +276,15 @@ TEST_F(NeighborHashMapTest, SIMDHash) {
   std::default_random_engine generator(0xdeadbeef);
   std::uniform_int_distribution<uint64_t> distribution;
 
-  NeighborHashMap<uint64_t, uint64_t, neighbor::policy::DefaultPolicy<uint64_t, uint64_t>> hashmap;
+  NeighborHashMap<uint64_t, uint64_t,
+      neighbor::policy::DefaultPolicy<uint64_t, uint64_t>>
+      hashmap;
 
   for (int i = 0; i < 1024; ++i) {
     uint64_t keys[8];
-    for (int x = 0; x < 8; ++x) { keys[x] = distribution(generator); }
+    for (int x = 0; x < 8; ++x) {
+      keys[x] = distribution(generator);
+    }
 
     __m512i vkeys = _mm512_loadu_epi64(keys);
 
@@ -302,7 +306,6 @@ TEST_F(NeighborHashMapTest, SIMDHash) {
 }
 #endif
 
-
 #ifdef NEIGHBOR_HASH_COROUTINE_FIND
 TEST_F(NeighborHashMapTest, CoroFind) {
   auto result = map.emplace(42, 100);
@@ -319,21 +322,22 @@ TEST_F(NeighborHashMapTest, CoroFind) {
 
 TEST_F(NeighborHashMapTest, AMACFind) {
   std::vector<uint32_t> keys;
-  for (int i = 0; i < 1024*1024; ++i) {
+  for (int i = 0; i < 1024 * 1024; ++i) {
     map[i] = i;
     keys.push_back(i);
   }
 
   size_t count = 0;
-  map.amac_find<4>(&keys[0], keys.size(), [&count](uint32_t k, uint32_t v){
+  map.amac_find<4>(&keys[0], keys.size(), [&count](uint32_t k, uint32_t v) {
     EXPECT_EQ(v, k);
     count += 1;
   });
   EXPECT_EQ(count, keys.size());
 }
 
-using atomic_hashmap = AtomicNeighborHashMap<
-  uint64_t, uint64_t, TestMultiGroupPolicyTraits<uint64_t, uint64_t>>;
+using atomic_hashmap = AtomicNeighborHashMap<uint64_t, uint64_t,
+    TestMultiGroupPolicyTraits<uint64_t, uint64_t>>;
+
 class AtomicNeighborHashMapTest : public ::testing::Test {
  protected:
   atomic_hashmap map;
@@ -342,7 +346,8 @@ class AtomicNeighborHashMapTest : public ::testing::Test {
 TEST_F(AtomicNeighborHashMapTest, InsertAndFind) {
   // atomic insert
   auto status = map.atomic_insert_or_update<true>(42, 100);
-  EXPECT_TRUE(status == atomic_hashmap::Status::kInserted);  // Insertion successful
+  EXPECT_TRUE(
+      status == atomic_hashmap::Status::kInserted);  // Insertion successful
 
   // non-atomic insert
   auto result = map.emplace(43, 200);
@@ -368,7 +373,8 @@ TEST_F(AtomicNeighborHashMapTest, AtomicInsert) {
   EXPECT_EQ(map.bucket_count(), 1024);
 
   auto status = map.atomic_insert_or_update<false>(42, 100);
-  EXPECT_TRUE(status == atomic_hashmap::Status::kInserted);  // Insertion successful
+  EXPECT_TRUE(
+      status == atomic_hashmap::Status::kInserted);  // Insertion successful
 
   status = map.atomic_insert_or_update<false>(42 + 1024, 200);
   EXPECT_TRUE(status == atomic_hashmap::Status::kTailInsertPrepared);
@@ -476,7 +482,7 @@ TEST_F(AtomicNeighborHashMapTest, RandomInsert) {
   }
 
   std::map<uint64_t, uint64_t> dump;
-  map.atomic_foreach([&dump] (uint64_t k, uint64_t v) { dump[k] = v; });
+  map.atomic_foreach([&dump](uint64_t k, uint64_t v) { dump[k] = v; });
   EXPECT_EQ(dump, reference_map);
 }
 

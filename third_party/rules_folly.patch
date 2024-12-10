@@ -1,6 +1,6 @@
 diff -u -N -r a/rules_folly/bazel/BUILD b/rules_folly/bazel/BUILD
 --- bazel/BUILD	2021-09-19 21:27:15.000000000 +0800
-+++ bazel/BUILD	2024-02-27 14:21:28.613553862 +0800
++++ bazel/BUILD	2024-12-11 00:08:14.648200446 +0800
 @@ -10,15 +10,15 @@
  config_setting(
      name = "linux_aarch64",
@@ -20,4 +20,20 @@ diff -u -N -r a/rules_folly/bazel/BUILD b/rules_folly/bazel/BUILD
 +        "@platforms//os:linux",
 +        "@platforms//cpu:x86_64",
      ],
+ )
+diff -u -N -r a/rules_folly/third_party/libevent/libevent.BUILD b/rules_folly/third_party/libevent/libevent.BUILD
+--- third_party/libevent/libevent.BUILD	2021-09-19 21:27:15.000000000 +0800
++++ third_party/libevent/libevent.BUILD	2024-12-11 00:08:57.748202216 +0800
+@@ -58,9 +58,9 @@
+         "mkdir -p $$TMP_DIR",
+         "cp -R $$(pwd)/external/com_github_libevent_libevent/* $$TMP_DIR",
+         "cd $$TMP_DIR",
+-        "./autogen.sh >/dev/null",
+-        "./configure --prefix=$$INSTALL_DIR CFLAGS=-fPIC CXXFLAGS=-fPIC --enable-shared=no --disable-openssl >/dev/null",
+-        "make -j$$(nproc) install >/dev/null",
++        "./autogen.sh &>/dev/null",
++        "./configure --prefix=$$INSTALL_DIR CFLAGS=-fPIC CXXFLAGS=-fPIC --enable-shared=no --disable-openssl &>/dev/null",
++        "make -j$$(nproc) install &>/dev/null",
+         "rm -rf $$TMP_DIR",
+     ]),
  )

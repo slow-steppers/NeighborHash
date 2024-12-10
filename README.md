@@ -7,18 +7,19 @@
 
 ----
 
-This repo contains codes and steps necessary to reproduce the artifacts for research paper titled [**CIKM'24: An Enhanced Batch Query Architecture in Real-time Recommendation**](https://dl.acm.org/doi/10.1145/3627673.3680034)
+This repo contains codes and steps necessary to reproduce the artifacts for research paper titled [**CIKM'24: An Enhanced Batch Query Architecture in Real-time Recommendation**](https://dl.acm.org/doi/10.1145/3627673.3680034).
 
 ## Setting up the hardware
 
-We conducted tests in the paper using Intel 5218 CPUs. In fact, any hardware that supports AVX512 can be used for reproduction, but the sresult may not necessarily match the results presented in the paper.
+We conducted tests in the paper using `Intel(R) Xeon(R) Gold 5218` CPUs. In fact, any hardware that supports AVX512 can be used for reproduction, but the sresult may not necessarily match the results presented in the paper.
 
 ## Software Requirements
 
-* linux x86\_64 >= 4.9.0
+* Linux x86\_64 kernel >= 4.9.0
 * Hugepage (2 MiB) supported and has been configured, for example: `echo 8192 > /proc/sys/vm/nr_hugepages`
-* clang >= 16.0.6 or gcc >= 11.4.0
+* Clang >= 16.0.6 or GCC >= 11.4.0
 * Bazel >= 6.3.0
+* Tested on Ubuntu 22.04
 
 ## Build benchmark
 

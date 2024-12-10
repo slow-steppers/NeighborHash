@@ -1,5 +1,7 @@
 build --compilation_mode="opt"
+build --distdir=".distdir"
 
+build --copt="-w"
 build --copt="-march=native"
 build --copt="-O3"
 build --copt="-ggdb"
@@ -9,19 +11,6 @@ build --strip="never"
 build:neighbor_hugepage --copt="-DNEIGHBOR_HASH_HUGEPAGE"
 build:neighbor_simd --copt="-DNEIGHBOR_HASH_SIMD_FIND"
 
-build --copt="-Wno-ignored-attributes"
-build --copt="-Wno-unused-variable"
-
 build:clang --repo_env="CC=clang"
-build:clang --copt="-Wno-unknown-warning-option"
-build:clang --copt="-Wno-deprecated-builtins"
-build:clang --copt="-Wno-deprecated-declarations"
-build:clang --copt="-Wno-deprecated-non-prototype"
-build:clang --copt="-Wno-inconsistent-missing-override"
-build:clang --copt="-Wno-unknown-warning-option"
-build:clang --copt="-Wno-unused-but-set-variable"
-build:clang --copt="-Wno-unused-function"
-build:clang --copt="-Wno-unused-parameter"
-build:clang --copt="-Wno-unused-private-field"
 
 clean --async

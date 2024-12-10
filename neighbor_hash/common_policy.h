@@ -30,10 +30,10 @@ struct DefaultIntegerHash {
 #ifdef NEIGHBOR_HASH_SIMD_FIND
   __m512i v_hash_64(__m512i key) const {
     __m512i mul = _mm512_mullo_epi64(_mm512_set1_epi64(kMul), key);
-    return _mm512_xor_epi64(mul, _mm512_srli_epi64(mul, (sizeof(uint64_t) * 8 / 2)));
+    return _mm512_xor_epi64(
+        mul, _mm512_srli_epi64(mul, (sizeof(uint64_t) * 8 / 2)));
   }
 #endif  // NEIGHBOR_HASH_SIMD_FIND
-
 };
 
 template <class K, class V>
@@ -53,9 +53,7 @@ struct DefaultPolicy {
     return size >= capactiy * 0.81;
   }
 
-  static size_t GrowthSize(size_t n) {
-    return std::max(n * 2, 1024UL);
-  }
+  static size_t GrowthSize(size_t n) { return std::max(n * 2, 1024UL); }
 
 #ifdef NEIGHBOR_HASH_HUGEPAGE
   static size_t round_to_huge_page_size(size_t n) {
@@ -65,8 +63,10 @@ struct DefaultPolicy {
   template <size_t alignment = 64>
   static void* Allocate(size_t size) {
     void* addr = mmap(0, round_to_huge_page_size(size), PROT_READ | PROT_WRITE,
-                      MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
-    if (addr == MAP_FAILED) { abort(); }
+        MAP_PRIVATE | MAP_ANONYMOUS | MAP_HUGETLB, 0, 0);
+    if (addr == MAP_FAILED) {
+      abort();
+    }
     // std::cout << "Returned address is:" << addr << " size:" << size << std::endl;
     return addr;
   }
@@ -74,15 +74,15 @@ struct DefaultPolicy {
   static void Deallocate(void* ptr, size_t size) {
     munmap(ptr, round_to_huge_page_size(size));
   }
-#else  // NEIGHBOR_HASH_HUGEPAGE
+#else   // NEIGHBOR_HASH_HUGEPAGE
   template <size_t alignment = 64>
   static void* Allocate(size_t size) {
-    auto* p = std::aligned_alloc(alignment, (size + alignment - 1) / alignment * alignment);
+    auto* p = std::aligned_alloc(
+        alignment, (size + alignment - 1) / alignment * alignment);
     return p;
   }
-  static void Deallocate(void* ptr, size_t) {
-    free(ptr);
-  }
+
+  static void Deallocate(void* ptr, size_t) { free(ptr); }
 #endif  // NEIGHBOR_HASH_HUGEPAGE
 
   using Hash = DefaultIntegerHash;
@@ -102,7 +102,8 @@ struct DefaultPolicy {
 
 template <class K, class V, size_t NumGroupBits = 0>
 struct DefaultMultiGroupPolicy : public DefaultPolicy<K, V> {
-  static std::tuple<int64_t, int64_t> SubRange(int64_t head_slot_index, size_t capacity) {
+  static std::tuple<int64_t, int64_t> SubRange(
+      int64_t head_slot_index, size_t capacity) {
     size_t per_group_size = capacity >> NumGroupBits;
     size_t bits = __builtin_ctz(per_group_size) + 1;
     int64_t start = (head_slot_index >> bits) << bits;

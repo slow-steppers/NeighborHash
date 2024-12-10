@@ -1,8 +1,8 @@
 #pragma once
 
-#include <stdlib.h>
 #include <stddef.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include <algorithm>
 #include <iostream>
@@ -25,7 +25,9 @@ namespace neighbor {
 class Fingerprint_16x16 {
  public:
   using MaskType = __mmask16;
-  static MaskType compare(uint16_t key_fingerprint, const uint16_t* fingerprints) {
+
+  static MaskType compare(
+      uint16_t key_fingerprint, const uint16_t* fingerprints) {
     __m256i vfingerprints = _mm256_loadu_epi16(fingerprints);
     __m256i vcompare = _mm256_set1_epi16(key_fingerprint);
 
@@ -45,14 +47,16 @@ class Fingerprint_16x16 {
 class Fingerprint_8x16 {
  public:
   using MaskType = __mmask16;
-  static MaskType compare(uint8_t key_fingerprint, const uint8_t* fingerprints) {
+
+  static MaskType compare(
+      uint8_t key_fingerprint, const uint8_t* fingerprints) {
     __m128i vfingerprints = _mm_loadu_epi8(fingerprints);
     __m128i vcompare = _mm_set1_epi8(key_fingerprint);
 
     return _mm_cmpeq_epi8_mask(vfingerprints, vcompare);
   }
 
- static int last_index(const uint8_t* fingerprints) {
+  static int last_index(const uint8_t* fingerprints) {
     __m128i vfingerprints = _mm_loadu_epi8(fingerprints);
     __mmask16 mask = _mm_movepi8_mask(vfingerprints);
     return __builtin_popcount(mask);
@@ -66,14 +70,15 @@ class Fingerprint_16x8 {
  public:
   using MaskType = __mmask8;
 
-  static MaskType compare(uint16_t key_fingerprint, const uint16_t* fingerprints) {
+  static MaskType compare(
+      uint16_t key_fingerprint, const uint16_t* fingerprints) {
     __m128i vfingerprints = _mm_loadu_epi16(fingerprints);
     __m128i vcompare = _mm_set1_epi16(key_fingerprint);
 
     return _mm_cmpeq_epi16_mask(vfingerprints, vcompare);
   }
 
- static int last_index(const uint16_t* fingerprints) {
+  static int last_index(const uint16_t* fingerprints) {
     __m128i vfingerprints = _mm_loadu_epi16(fingerprints);
     __mmask8 mask = _mm_movepi16_mask(vfingerprints);
     return __builtin_popcount(mask);
@@ -88,7 +93,8 @@ class KeyValueAoSStoringBucket {
  public:
   KeyValueAoSStoringBucket() {
     std::fill(std::begin(fingerprints_), std::end(fingerprints_), 0);
-    std::fill(std::begin(keys_values_), std::end(keys_values_), std::make_pair(K(), V()));
+    std::fill(std::begin(keys_values_), std::end(keys_values_),
+        std::make_pair(K(), V()));
   }
 
   using MaskType = typename FingerprintGroup::MaskType;
@@ -100,7 +106,8 @@ class KeyValueAoSStoringBucket {
   static constexpr int kNotFound = -1;
 
   static constexpr FingerprintT kEmpty = 0;
-  static constexpr FingerprintT kFullMask = FingerprintT(1) << (sizeof(FingerprintT) * 8 - 1);
+  static constexpr FingerprintT kFullMask = FingerprintT(1)
+      << (sizeof(FingerprintT) * 8 - 1);
 
   void reset() {
     for (uint64_t i = 0; i < kNumFingerprints; ++i) {
@@ -109,12 +116,14 @@ class KeyValueAoSStoringBucket {
     }
   }
 
-  std::pair<int, int> count_cacheline(K key, FingerprintT fingerprint, bool* found) {
+  std::pair<int, int> count_cacheline(
+      K key, FingerprintT fingerprint, bool* found) {
     static constexpr size_t kCachelineMask = ~(64UL - 1);
     std::set<intptr_t> cachelines;
     int probing_count = 1;
     cachelines.insert(intptr_t(&fingerprints_[0]) & kCachelineMask);
-    auto vequal = FingerprintGroup::compare(fingerprint | kFullMask, &fingerprints_[0]);
+    auto vequal =
+        FingerprintGroup::compare(fingerprint | kFullMask, &fingerprints_[0]);
     while (vequal) {
       int index_in_bucket = __builtin_ctz(vequal);
       auto& kv_pair = keys_values_[index_in_bucket];
@@ -132,24 +141,29 @@ class KeyValueAoSStoringBucket {
 
 #ifdef ABSL_HAVE_PREFETCH
   int amac_compare(MaskType& mask, FingerprintT fingerprint, K key) {
-    static constexpr int kInFirstCachlineSize = (64 - sizeof(fingerprints_)) / sizeof(std::pair<K, V>);
+    static constexpr int kInFirstCachlineSize =
+        (64 - sizeof(fingerprints_)) / sizeof(std::pair<K, V>);
     static constexpr int kItemsPerCacheline = 64 / sizeof(std::pair<K, V>);
     int current_cacheline_boundary = kInFirstCachlineSize;
     int index = 0;
     if (mask == 0) {
-      mask = FingerprintGroup::compare(fingerprint | kFullMask, &fingerprints_[0]);
-      if (mask == 0) { goto end; }
+      mask =
+          FingerprintGroup::compare(fingerprint | kFullMask, &fingerprints_[0]);
+      if (mask == 0) {
+        goto end;
+      }
     } else {
       index = __builtin_ctz(mask);
-      current_cacheline_boundary =
-          kInFirstCachlineSize + (index - kInFirstCachlineSize) / kItemsPerCacheline * kItemsPerCacheline;
+      current_cacheline_boundary = kInFirstCachlineSize +
+          (index - kInFirstCachlineSize) / kItemsPerCacheline *
+              kItemsPerCacheline;
       goto compare;
     }
 
     do {
       index = __builtin_ctz(mask);
       if (index < current_cacheline_boundary) {
-     compare:
+      compare:
         mask &= mask - 1;
         auto& kv_pair = keys_values_[index];
         if (PREDICT_TURE((std::get<0>(kv_pair) == key))) [[likely]] {
@@ -160,14 +174,17 @@ class KeyValueAoSStoringBucket {
         return kSuspend;
       }
     } while (mask);
- end:
-    if (!is_overflowed()) { return kNotFound; }
+  end:
+    if (!is_overflowed()) {
+      return kNotFound;
+    }
     return kOverFlowed;
   }
 #endif  // ABSL_HAVE_PREFETCH
 
   int find(K key, FingerprintT fingerprint) {
-    auto vequal = FingerprintGroup::compare(fingerprint | kFullMask, &fingerprints_[0]);
+    auto vequal =
+        FingerprintGroup::compare(fingerprint | kFullMask, &fingerprints_[0]);
     while (vequal) {
       int index_in_bucket = __builtin_ctz(vequal);
       auto& kv_pair = keys_values_[index_in_bucket];
@@ -206,28 +223,23 @@ class KeyValueAoSStoringBucket {
     return fingerprints_[kNumFingerprints - 1] != kEmpty;
   }
 
-  size_t size() const {
-    return last_index_in_bucket() + 1;
-  }
+  size_t size() const { return last_index_in_bucket() + 1; }
 
   int last_index_in_bucket() const {
     return FingerprintGroup::last_index(&fingerprints_[0]) - 1;
   }
 
-  const std::pair<K, V>& value(int index) const {
-    return keys_values_[index];
-  }
+  const std::pair<K, V>& value(int index) const { return keys_values_[index]; }
 
-  std::pair<K, V>& value(int index) {
-    return keys_values_[index];
-  }
+  std::pair<K, V>& value(int index) { return keys_values_[index]; }
 
  private:
   alignas(64) FingerprintT fingerprints_[kNumFingerprints];
   std::pair<K, V> keys_values_[kNumFingerprints];
 };
 
-template <typename K, typename V, typename PolicyTraits, typename FingerprintGroup>
+template <typename K, typename V, typename PolicyTraits,
+    typename FingerprintGroup>
 class BucketingSIMDHashTable {
  public:
   static constexpr int kCachelineSize = 64;
@@ -238,8 +250,10 @@ class BucketingSIMDHashTable {
   BucketingSIMDHashTable(size_t capacity = 1024) {
     capacity_ = PolicyTraits::NormalizeCapacity(capacity);
     num_buckets_ = capacity_ / FingerprintGroup::kNumFingerprints;
-    buckets_ = (BucketT*)PolicyTraits::template Allocate<kCachelineSize>(sizeof(BucketT) * num_buckets_);
-    for (size_t i = 0; i < num_buckets_; ++i) buckets_[i].reset();
+    buckets_ = (BucketT*)PolicyTraits::template Allocate<kCachelineSize>(
+        sizeof(BucketT) * num_buckets_);
+    for (size_t i = 0; i < num_buckets_; ++i)
+      buckets_[i].reset();
     size_ = 0;
   }
 
@@ -260,14 +274,10 @@ class BucketingSIMDHashTable {
     iterator() {}
 
     // PRECONDITION: not an end() iterator.
-    reference operator*() const {
-      return bucket_->value(index_in_bucket_);
-    }
+    reference operator*() const { return bucket_->value(index_in_bucket_); }
 
     // PRECONDITION: not an end() iterator.
-    pointer operator->() const {
-      return &operator*();
-    }
+    pointer operator->() const { return &operator*(); }
 
     // PRECONDITION: not an end() iterator.
     iterator& operator++() {
@@ -276,9 +286,7 @@ class BucketingSIMDHashTable {
     }
 
     // PRECONDITION: not an end() iterator.
-    iterator operator++(int) {
-      abort();
-    }
+    iterator operator++(int) { abort(); }
 
     friend bool operator==(const iterator& a, const iterator& b) {
       return a.bucket_ == b.bucket_ && a.index_in_bucket_ == b.index_in_bucket_;
@@ -290,11 +298,9 @@ class BucketingSIMDHashTable {
 
    private:
     iterator(BucketT* bucket, int index_in_bucket)
-        : bucket_(bucket)
-        , index_in_bucket_(index_in_bucket){ }
+        : bucket_(bucket), index_in_bucket_(index_in_bucket) {}
 
-    void skip_empty() {
-    }
+    void skip_empty() {}
 
     BucketT* bucket_ = nullptr;
     int index_in_bucket_ = -1;
@@ -341,7 +347,8 @@ class BucketingSIMDHashTable {
     int state_circular_buffer_stop_index = -1;
     constexpr int kExpandSize = 4;
     while (keys_index < keys_size) {
-      auto* state_slice = &states[state_circular_buffer_index & (kPipelineSize - 1)];
+      auto* state_slice =
+          &states[state_circular_buffer_index & (kPipelineSize - 1)];
       for (int i = 0; i < kExpandSize; ++i) {
         auto& state = state_slice[i];
         int index = state.bucket->amac_compare(
@@ -351,16 +358,18 @@ class BucketingSIMDHashTable {
         } else if (index == BucketT::kOverFlowed) {
           // probing next
           state.bucket += 1;
-          state.bucket = &buckets_[(state.bucket - buckets_) & (num_buckets_ - 1)];
+          state.bucket =
+              &buckets_[(state.bucket - buckets_) & (num_buckets_ - 1)];
           absl::PrefetchToLocalCache(state.bucket);
           continue;
         } else if (index >= 0) {
           fn(state.key, state.bucket->value(index).second);
-        } // else : not found
+        }  // else : not found
 
         // fetch next key
         if (keys_index >= keys_size) {
-          state_circular_buffer_stop_index = (state_circular_buffer_index + i) & (kPipelineSize - 1);
+          state_circular_buffer_stop_index =
+              (state_circular_buffer_index + i) & (kPipelineSize - 1);
           break;
         }
         auto key = keys[keys_index];
@@ -408,18 +417,20 @@ class BucketingSIMDHashTable {
     size_ = 0;
   }
 
-  iterator end() const {
-    return iterator{nullptr, -1};
-  }
+  iterator end() const { return iterator{nullptr, -1}; }
 
   size_t size() { return size_; }
+
   bool empty() const { return size() == 0; }
+
   float load_factor() const { return static_cast<float>(size_) / capacity_; }
 
   void reserve(size_t n) { rehash(n); }
 
   void rehash(size_t n) {
-    if (capacity_ >= n) { return; }
+    if (capacity_ >= n) {
+      return;
+    }
     BucketingSIMDHashTable new_hash(n);
     for (size_t i = 0; i < num_buckets_; ++i) {
       auto& bucket = buckets_[i];
@@ -435,9 +446,7 @@ class BucketingSIMDHashTable {
     std::swap(num_buckets_, new_hash.num_buckets_);
   }
 
-  V& operator[](K key) {
-    return emplace(key, V()).first->second;
-  }
+  V& operator[](K key) { return emplace(key, V()).first->second; }
 
   std::pair<iterator, bool> emplace(K key, V value) {
     return emplace_impl<false>(key, value);
@@ -457,11 +466,13 @@ class BucketingSIMDHashTable {
     return hash & (num_buckets_ - 1);
   }
 
-  std::pair<BucketT*, int> find_impl(K key, FingerprintT fingerprint, int64_t bucket_index) {
+  std::pair<BucketT*, int> find_impl(
+      K key, FingerprintT fingerprint, int64_t bucket_index) {
     while (true) {
       auto& bucket = buckets_[bucket_index];
       auto index_in_bucket = bucket.find(key, fingerprint);
-      if (ABSL_PREDICT_TRUE(index_in_bucket != BucketT::kOverFlowed)) [[likely]] {
+      if (ABSL_PREDICT_TRUE(index_in_bucket != BucketT::kOverFlowed))
+          [[likely]] {
         return {&bucket, index_in_bucket};
       }
 
@@ -518,8 +529,8 @@ class BucketingSIMDHashTable {
         bool found = false;
         int c = 0;
         while (!found) {
-          auto [cachlines, probes] = buckets_[bucket_index].count_cacheline(
-              key, fingerprint, &found);
+          auto [cachlines, probes] =
+              buckets_[bucket_index].count_cacheline(key, fingerprint, &found);
           total_cacheline_access += cachlines;
           c += cachlines;
           probing_count += probes;
@@ -537,8 +548,7 @@ class BucketingSIMDHashTable {
     std::cout << "size:" << size_
               << " total_cacheline_access:" << total_cacheline_access
               << " average:" << double(total_cacheline_access) / size_
-              << " probings:" << probing_count
-              << std::endl;
+              << " probings:" << probing_count << std::endl;
   }
 
  protected:
