@@ -7,11 +7,11 @@
 
 ----
 
-This repo contains codes and steps necessary to reproduce the artifacts for research paper titled [**CIKM'24: An Enhanced Batch Query Architecture in Real-time Recommendation**](https://dl.acm.org/doi/10.1145/3627673.3680034)
+This repo contains codes and steps necessary to reproduce the artifacts for research paper titled [**CIKM'24: An Enhanced Batch Query Architecture in Real-time Recommendation**](https://dl.acm.org/doi/10.1145/3627673.3680034).
 
 ## Setting up the hardware
 
-We conducted tests in the paper using Intel 5218 CPUs. In fact, any hardware that supports AVX512 can be used for reproduction, but the sresult may not necessarily match the results presented in the paper.
+We conducted tests in the paper using `Intel(R) Xeon(R) Gold 5218` CPUs. In fact, any hardware that supports AVX512 can be used for reproduction, but the sresult may not necessarily match the results presented in the paper.
 
 ## Software Requirements
 
