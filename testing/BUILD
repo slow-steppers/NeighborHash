@@ -15,6 +15,17 @@ cc_test(
     ],
 )
 
+cc_test(
+    name = "random_erase_test",
+    srcs = ["random_erase_test.cc"],
+    copts = _COPTS,
+    deps = [
+        "//:neighbor_hash",
+        "@com_google_absl//absl/container:flat_hash_map",
+        "@com_google_googletest//:gtest_main",  # Google Test dependency
+    ],
+)
+
 # Benchmark target using Google Benchmark
 cc_test(
     name = "hash_map_benchmark",
