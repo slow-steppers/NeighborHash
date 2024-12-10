@@ -1128,9 +1128,9 @@ class alignas(64) NeighborHashMap {
   void EraseSlot(int64_t prev_slot_index, int64_t slot_index) {
     auto& slot = slots_[slot_index];
     int offset = slot.offset();
-    slot.reset();
     if (offset == 0) {
       slots_[prev_slot_index].set_offset(0);
+      slot.reset();
     } else {
       auto* current_slot = &slot;
       do {
