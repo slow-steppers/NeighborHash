@@ -1043,8 +1043,8 @@ class alignas(64) NeighborHashMap {
     // We purposefully use 'kUnOccupiedKey' as the initial key's value
     // to avoid the need to check if the slot is occupied during the 'find' operation.
     slots_[slot_index].set_key(invalid_key);
-    slots_[slot_index].set_offset(0);
     slots_[slot_index].set_payload(0);
+    // NOTE: we should keep its `offset`.
 
     invisible_slot_index_ = slot_index;
   }
