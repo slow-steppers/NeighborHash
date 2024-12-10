@@ -15,10 +15,11 @@ We conducted tests in the paper using `Intel(R) Xeon(R) Gold 5218` CPUs. In fact
 
 ## Software Requirements
 
-* linux x86\_64 >= 4.9.0
+* Linux x86\_64 kernel >= 4.9.0
 * Hugepage (2 MiB) supported and has been configured, for example: `echo 8192 > /proc/sys/vm/nr_hugepages`
-* clang >= 16.0.6 or gcc >= 11.4.0
+* Clang >= 16.0.6 or GCC >= 11.4.0
 * Bazel >= 6.3.0
+* Tested on Ubuntu 22.04
 
 ## Build benchmark
 
