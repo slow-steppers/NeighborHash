@@ -16,7 +16,8 @@ if [ "$(type -t "bazel")" == "file" ]; then
     NEED_DOWNLOAD_BAZEL="0"
   fi
   if [ "$(echo -ne "${SYSTEM_BAZEL_VERSION}\n8.0.0\n" | sort -V | head -n "1")" == "8.0.0" ]; then
-    ARGUMENTS+=( --enable_workspace --noincompatible_disallow_empty_glob )
+    # ARGUMENTS+=( --enable_workspace --noincompatible_disallow_empty_glob )
+    NEED_DOWNLOAD_BAZEL="1"
   fi
 fi
 
