@@ -31,9 +31,9 @@ diff -u -N -r a/rules_folly/third_party/libevent/libevent.BUILD b/rules_folly/th
 -        "./autogen.sh >/dev/null",
 -        "./configure --prefix=$$INSTALL_DIR CFLAGS=-fPIC CXXFLAGS=-fPIC --enable-shared=no --disable-openssl >/dev/null",
 -        "make -j$$(nproc) install >/dev/null",
-+        "./autogen.sh >/dev/null",
-+        "./configure --prefix=$$INSTALL_DIR CFLAGS=-fPIC CXXFLAGS=-fPIC --enable-shared=no --disable-openssl >/dev/null",
-+        "make -j$$(nproc) install >/dev/null",
++        "./autogen.sh &>/dev/null",
++        "./configure --prefix=$$INSTALL_DIR CFLAGS=-fPIC CXXFLAGS=-fPIC --enable-shared=no --disable-openssl &>/dev/null",
++        "make -j$$(nproc) install &>/dev/null",
          "rm -rf $$TMP_DIR",
      ]),
  )
