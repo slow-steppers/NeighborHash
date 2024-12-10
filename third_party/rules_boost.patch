@@ -1,6 +1,6 @@
 diff -u -N -r a/rules_boost/BUILD.boost b/rules_boost/BUILD.boost
 --- BUILD.boost	2021-07-17 11:53:36.000000000 +0800
-+++ BUILD.boost	2024-02-27 14:21:28.605553862 +0800
++++ BUILD.boost	2024-12-11 00:17:04.304222200 +0800
 @@ -12,7 +12,7 @@
  config_setting(
      name = "linux",
@@ -145,9 +145,17 @@ diff -u -N -r a/rules_boost/BUILD.boost b/rules_boost/BUILD.boost
      ],
      visibility = ["//visibility:public"],
  )
+@@ -1497,6 +1497,7 @@
+ 
+ boost_library(
+     name = "program_options",
++    copts = ["-DBOOST_BIND_GLOBAL_PLACEHOLDERS"],
+     deps = [
+         ":any",
+         ":bind",
 diff -u -N -r a/rules_boost/BUILD.lzma b/rules_boost/BUILD.lzma
 --- BUILD.lzma	2021-07-17 11:53:36.000000000 +0800
-+++ BUILD.lzma	2024-02-27 14:21:28.605553862 +0800
++++ BUILD.lzma	2024-12-11 00:14:32.364215959 +0800
 @@ -6,33 +6,33 @@
  
  config_setting(
@@ -191,7 +199,7 @@ diff -u -N -r a/rules_boost/BUILD.lzma b/rules_boost/BUILD.lzma
  copy_file(
 diff -u -N -r a/rules_boost/BUILD.zstd b/rules_boost/BUILD.zstd
 --- BUILD.zstd	2021-07-17 11:53:36.000000000 +0800
-+++ BUILD.zstd	2024-02-27 14:21:28.605553862 +0800
++++ BUILD.zstd	2024-12-11 00:14:32.364215959 +0800
 @@ -233,6 +233,6 @@
  config_setting(
      name = "windows",

@@ -1,22 +1,30 @@
 cc_library(
     name = "unordered_dense",
-    strip_include_prefix = "include",
     hdrs = ["include/ankerl/unordered_dense.h"],
-    visibility = ["//visibility:public"]
+    strip_include_prefix = "include",
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
     name = "bench",
-    strip_include_prefix = "test",
-    copts = ["-Iexternal/doctest/doctest"],
-    hdrs = [
-        "test/third-party/nanobench.h",
-        "test/app/doctest.h",
-        "test/app/counter.h",
-        "test/app/print.h",
-        "test/app/name_of_type.h"
+    srcs = [
+        "test/app/counter.cpp",
+        "test/app/doctest.cpp",
+        "test/app/nanobench.cpp",
     ],
-    srcs = ["test/app/nanobench.cpp", "test/app/doctest.cpp", "test/app/counter.cpp"],
-    deps = [":unordered_dense", "@fmtlib", "@doctest//doctest:doctest"],
-    visibility = ["//visibility:public"]
+    hdrs = [
+        "test/app/counter.h",
+        "test/app/doctest.h",
+        "test/app/name_of_type.h",
+        "test/app/print.h",
+        "test/third-party/nanobench.h",
+    ],
+    copts = ["-Iexternal/doctest/doctest"],
+    strip_include_prefix = "test",
+    visibility = ["//visibility:public"],
+    deps = [
+        ":unordered_dense",
+        "@doctest//doctest",
+        "@fmtlib",
+    ],
 )
