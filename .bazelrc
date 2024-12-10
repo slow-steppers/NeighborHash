@@ -1,4 +1,5 @@
 build --compilation_mode="opt"
+build --distdir=".distdir"
 
 build --copt="-march=native"
 build --copt="-O3"
