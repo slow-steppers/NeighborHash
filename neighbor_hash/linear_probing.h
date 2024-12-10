@@ -1,8 +1,8 @@
 #pragma once
 
 #include <stddef.h>
-#include <stdlib.h>
 #include <stdint.h>
+#include <stdlib.h>
 
 #include <iostream>
 #include <iterator>
@@ -21,12 +21,13 @@ template <class K, class V, class PolicyTraits>
 class LinearProbingHashMap {
  public:
   static constexpr size_t kValueBitCount = sizeof(V) * 8;
-  static constexpr size_t kOffsetBitCount = kValueBitCount - PolicyTraits::kPayloadBitCount;
+  static constexpr size_t kOffsetBitCount =
+      kValueBitCount - PolicyTraits::kPayloadBitCount;
   static constexpr size_t kPayloadBitCount = PolicyTraits::kPayloadBitCount;
 
   static constexpr V kPayloadMask = V(-1) >> kOffsetBitCount;
-  static constexpr V kOffsetMask =
-      (V(-1) >> PolicyTraits::kPayloadBitCount) << PolicyTraits::kPayloadBitCount;
+  static constexpr V kOffsetMask = (V(-1) >> PolicyTraits::kPayloadBitCount)
+      << PolicyTraits::kPayloadBitCount;
   static constexpr int kUnOccupied = 0;
   static constexpr int kOccupied = 1;
   static constexpr int kInvalidOffset = 2;
@@ -53,14 +54,10 @@ class LinearProbingHashMap {
     iterator() {}
 
     // PRECONDITION: not an end() iterator.
-    reference operator*() const {
-      return slot_->value();
-    }
+    reference operator*() const { return slot_->value(); }
 
     // PRECONDITION: not an end() iterator.
-    pointer operator->() const {
-      return &operator*();
-    }
+    pointer operator->() const { return &operator*(); }
 
     // PRECONDITION: not an end() iterator.
     iterator& operator++() {
@@ -86,8 +83,7 @@ class LinearProbingHashMap {
 
    private:
     iterator(slot_type* slot, const LinearProbingHashMap* container)
-        : slot_(slot)
-        , container_(container){ }
+        : slot_(slot), container_(container) {}
 
     void skip_unoccupied() {
       if (slot_->offset() == kInvalidOffset) {
@@ -117,13 +113,12 @@ class LinearProbingHashMap {
     return end();
   }
 
-  iterator end() const {
-    return iterator{nullptr, this};
-  }
+  iterator end() const { return iterator{nullptr, this}; }
 
   explicit LinearProbingHashMap(size_t capacity) {
     capacity_ = PolicyTraits::NormalizeCapacity(capacity);
-    slots_ = (slot_type*)PolicyTraits::template Allocate<64>(sizeof(slot_type) * (capacity_ + 1));
+    slots_ = (slot_type*)PolicyTraits::template Allocate<64>(
+        sizeof(slot_type) * (capacity_ + 1));
     for (size_t i = 0; i < capacity_ + 1; ++i) {
       new (&slots_[i]) slot_type;
     }
@@ -131,7 +126,7 @@ class LinearProbingHashMap {
     size_ = 0;
   }
 
-  LinearProbingHashMap() : LinearProbingHashMap(8) { }
+  LinearProbingHashMap() : LinearProbingHashMap(8) {}
 
   ~LinearProbingHashMap() {
     if (slots_) {
@@ -141,14 +136,19 @@ class LinearProbingHashMap {
   }
 
   size_t size() const { return size_; }
+
   size_t bucket_count() const { return capacity_; }
+
   bool empty() const { return size() == 0; }
+
   float load_factor() const { return static_cast<float>(size_) / capacity_; }
 
   void reserve(size_t n) { rehash(n); }
 
   void rehash(size_t n) {
-    if (capacity_ >= n) { return; }
+    if (capacity_ >= n) {
+      return;
+    }
     LinearProbingHashMap new_hash(n);
     for (size_t i = 0; i < capacity_; ++i) {
       if (is_occupied_slot(i)) {
@@ -173,9 +173,7 @@ class LinearProbingHashMap {
     return emplace_impl<true>(key, value);
   }
 
-  int64_t SlotIndex(K key) const {
-    return hash2slot_(hash_(key), capacity_);
-  }
+  int64_t SlotIndex(K key) const { return hash2slot_(hash_(key), capacity_); }
 
   inline iterator find(K key) const {
     int64_t slot_index = SlotIndex(key);
@@ -205,17 +203,22 @@ class LinearProbingHashMap {
   }
 
   void erase(iterator it) { abort(); }
+
   size_t erase(K k) { abort(); }
 
   static constexpr size_t kCachelineMask = ~(64UL - 1);
+
   bool is_one_cacheline_access(K key) const {
     int slot_index = SlotIndex(key);
-    if (slots_[slot_index].key() == key) { return false; }
+    if (slots_[slot_index].key() == key) {
+      return false;
+    }
 
     auto cacheline_id = ((intptr_t)(&slots_[slot_index]) & kCachelineMask);
     int count = 1;
 
-    while (slots_[slot_index].offset() != kUnOccupied && slots_[slot_index].key() != key) {
+    while (slots_[slot_index].offset() != kUnOccupied &&
+        slots_[slot_index].key() != key) {
       slot_index += 1;
       slot_index &= capacity_ - 1;
       if (cacheline_id != ((intptr_t)(&slots_[slot_index]) & kCachelineMask)) {
@@ -233,7 +236,9 @@ class LinearProbingHashMap {
 
     std::map<size_t, size_t> cacheline_sizes;
     for (size_t i = 0; i < capacity_; ++i) {
-      if (slots_[i].offset() != kOccupied) { continue; }
+      if (slots_[i].offset() != kOccupied) {
+        continue;
+      }
 
       probing_count += 1;
       int slot_index = SlotIndex(slots_[i].key());
@@ -264,8 +269,7 @@ class LinearProbingHashMap {
               << " total_cacheline_access:" << total_cacheline_access
               << " average:" << double(total_cacheline_access) / size_
               << " reprobed_keys:" << reprobed_keys
-              << " probing_count:" << probing_count
-              << std::endl;
+              << " probing_count:" << probing_count << std::endl;
   }
 
 #ifdef ABSL_HAVE_PREFETCH
@@ -305,10 +309,11 @@ class LinearProbingHashMap {
     int state_circular_buffer_stop_index = -1;
     constexpr int kExpandSize = 4;
     while (keys_index < keys_size) {
-      auto* state_slice = &states[state_circular_buffer_index & (kPipelineSize - 1)];
+      auto* state_slice =
+          &states[state_circular_buffer_index & (kPipelineSize - 1)];
       for (int i = 0; i < kExpandSize; ++i) {
         auto& state = state_slice[i];
-     try_find:
+      try_find:
         if (state.slot->key() == state.key) {
           fn(state.key, state.slot->payload());
         } else {
@@ -327,7 +332,8 @@ class LinearProbingHashMap {
         }
         // fetch next key
         if (keys_index >= keys_size) {
-          state_circular_buffer_stop_index = (state_circular_buffer_index + i) & (kPipelineSize - 1);
+          state_circular_buffer_stop_index =
+              (state_circular_buffer_index + i) & (kPipelineSize - 1);
           break;
         }
         auto key = keys[keys_index];
@@ -355,7 +361,7 @@ class LinearProbingHashMap {
         state.slot += 1;
       }
       fn(state.key, state.slot->payload());
-   next:;
+    next:;
     }
   }
 #endif  // ABSL_HAVE_PREFETCH

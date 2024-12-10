@@ -1,31 +1,31 @@
-#include <stddef.h>                                // for size_t, NULL
-#include <stdint.h>                                // for uint64_t, int64_t
-#include <sys/time.h>                              // for gettimeofday, timeval
+#include <stddef.h>    // for size_t, NULL
+#include <stdint.h>    // for uint64_t, int64_t
+#include <sys/time.h>  // for gettimeofday, timeval
 
-#include <iostream>                                // for operator<<, basic_...
-#include <limits>                                  // for numeric_limits
-#include <random>                                  // for seed_seq
-#include <thread>                                  // for thread
-#include <vector>                                  // for vector
+#include <iostream>  // for operator<<, basic_...
+#include <limits>    // for numeric_limits
+#include <random>    // for seed_seq
+#include <thread>    // for thread
+#include <vector>    // for vector
 
 #include "absl/random/random.h"                    // for pcg128_params, pcg...
 #include "absl/random/uniform_int_distribution.h"  // for uniform_int_distri...
 #include "folly/synchronization/Rcu.h"             // for synchronize_rcu
 
-#include "neighbor_hash/common_policy.h"           // for DefaultPolicy
-#include "neighbor_hash/neighbor_hash.h"           // for AtomicNeighborHashMap
+#include "neighbor_hash/common_policy.h"  // for DefaultPolicy
+#include "neighbor_hash/neighbor_hash.h"  // for AtomicNeighborHashMap
 
 inline double gettime() {
-   struct timeval now_tv;
-   gettimeofday(&now_tv, NULL);
-   return ((double)now_tv.tv_sec) + ((double)now_tv.tv_usec) / 1000000.0;
+  struct timeval now_tv;
+  gettimeofday(&now_tv, NULL);
+  return ((double)now_tv.tv_sec) + ((double)now_tv.tv_usec) / 1000000.0;
 }
 
 template <class T>
 std::vector<T> GenerateRandomNumbers(int count, T range, int seed = 3) {
   std::vector<T> numbers;
   numbers.reserve(count);
-  std::seed_seq sseq{1,2,seed};
+  std::seed_seq sseq{1, 2, seed};
   absl::InsecureBitGen gen(sseq);
   absl::uniform_int_distribution<T> distribution(0, range);
   for (int i = 0; i < count; ++i) {
@@ -40,9 +40,10 @@ class BM_MultiThreading {
   void SetUp(size_t total_dataset_size, double hit_ratio, double load_factor) {
     size_t dataset_size = total_dataset_size * load_factor;
     size_t keys_count = dataset_size / hit_ratio;
-    numbers_ = GenerateRandomNumbers(keys_count, std::numeric_limits<uint64_t>::max());
+    numbers_ =
+        GenerateRandomNumbers(keys_count, std::numeric_limits<uint64_t>::max());
 
-    std::seed_seq sseq{1,2,3};
+    std::seed_seq sseq{1, 2, 3};
     absl::InsecureBitGen gen(sseq);
 
     map_.reserve(dataset_size);
@@ -53,10 +54,10 @@ class BM_MultiThreading {
     }
   }
 
-  void TearDown() {  }
+  void TearDown() {}
 
   void BenchmarkInsertAndLookup(int thread_index) {
-    std::seed_seq sseq{1,2,thread_index};
+    std::seed_seq sseq{1, 2, thread_index};
     absl::InsecureBitGen gen(sseq);
 
     if (thread_index == 0) {
@@ -67,7 +68,8 @@ class BM_MultiThreading {
 
       std::vector<uint64_t> update_numbers;
       for (size_t i = 0; i < numbers_.size(); ++i) {
-        size_t sampled_index = absl::uniform_int_distribution<size_t>(0, numbers_.size())(gen);
+        size_t sampled_index =
+            absl::uniform_int_distribution<size_t>(0, numbers_.size())(gen);
         auto key = numbers_[sampled_index];
         update_numbers.emplace_back(key);
       }
@@ -134,17 +136,19 @@ class BM_MultiThreading {
           delayed_insertions.clear();
         }
         auto end = gettime();
-        std::cout << "writer speed:" << (inserted + updated) / 1e6 / (end - begin)
-                  << " M-ops/s inserted/updated:" << static_cast<float>(inserted) / updated
-                  << " load factor:" << map_.load_factor()
-                  << std::endl;
+        std::cout << "writer speed:"
+                  << (inserted + updated) / 1e6 / (end - begin)
+                  << " M-ops/s inserted/updated:"
+                  << static_cast<float>(inserted) / updated
+                  << " load factor:" << map_.load_factor() << std::endl;
       }
     } else {
       // reader
       std::vector<uint64_t> access_numbers;
 
       for (size_t i = 0; i < numbers_.size(); ++i) {
-        size_t sampled_index = absl::uniform_int_distribution<size_t>(0, numbers_.size())(gen);
+        size_t sampled_index =
+            absl::uniform_int_distribution<size_t>(0, numbers_.size())(gen);
         auto key = numbers_[sampled_index];
         access_numbers.push_back(key);
       }
@@ -158,34 +162,43 @@ class BM_MultiThreading {
         constexpr int loops = 7;
         auto begin = gettime();
         for (int xx = 0; xx < loops; ++xx) {
-          for (size_t xxx = 0; xxx < access_numbers.size() - kBatchSize; xxx += kBatchSize) {
+          for (size_t xxx = 0; xxx < access_numbers.size() - kBatchSize;
+               xxx += kBatchSize) {
             folly::rcu_reader rcu_guard;
             const auto* data = &access_numbers[xxx];
             if constexpr (AMACWindow != 0) {
 #ifdef NEIGHBOR_HASH_SIMD_FIND
-              map_.template simd_amac_find<AMACWindow>(data, kBatchSize, [&sum](auto, uint64_t v) { sum ^= v; });
+              map_.template simd_amac_find<AMACWindow>(
+                  data, kBatchSize, [&sum](auto, uint64_t v) { sum ^= v; });
 #else
-              map_.template amac_find<AMACWindow>(data, kBatchSize, [&sum](auto, uint64_t v) { sum ^= v; });
+              map_.template amac_find<AMACWindow>(
+                  data, kBatchSize, [&sum](auto, uint64_t v) { sum ^= v; });
 #endif
             } else {
 #ifdef NEIGHBOR_HASH_SIMD_FIND
-              map_.template simd_find(data, kBatchSize, [&sum](auto, uint64_t v) { sum ^= v; });
+              map_.template simd_find(
+                  data, kBatchSize, [&sum](auto, uint64_t v) { sum ^= v; });
 #else
-              map_.find(data, kBatchSize, [&sum](auto, uint64_t v) { sum ^= v; });
+              map_.find(
+                  data, kBatchSize, [&sum](auto, uint64_t v) { sum ^= v; });
 #endif
             }
           }
         }
         auto end = gettime();
         if (thread_index == 1) {
-          std::cout << "reader speed:" << loops * access_numbers.size() / 1e6 / (end - begin) << " M-ops/s"
+          std::cout << "reader speed:"
+                    << loops * access_numbers.size() / 1e6 / (end - begin)
+                    << " M-ops/s"
                     << " sum:" << sum << std::endl;
         }
       }
     }
   }
+
   using MyPolicyTraits = neighbor::policy::DefaultPolicy<uint64_t, uint64_t>;
-  using atomic_hashmap = neighbor::AtomicNeighborHashMap<uint64_t, uint64_t, MyPolicyTraits>;
+  using atomic_hashmap =
+      neighbor::AtomicNeighborHashMap<uint64_t, uint64_t, MyPolicyTraits>;
 
  protected:
   atomic_hashmap map_;
@@ -198,10 +211,10 @@ int main() {
   std::cout << "setup" << std::endl;
   std::vector<std::thread> threads;
   for (int i = 0; i < 16; ++i) {
-    threads.emplace_back([&bm, i] {
-      bm.BenchmarkInsertAndLookup(i);
-    });
+    threads.emplace_back([&bm, i] { bm.BenchmarkInsertAndLookup(i); });
   }
 
-  for (auto& th : threads) { th.join(); }
+  for (auto& th : threads) {
+    th.join();
+  }
 }
