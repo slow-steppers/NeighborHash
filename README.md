@@ -11,7 +11,7 @@ This repo contains codes and steps necessary to reproduce the artifacts for rese
 
 ## Setting up the hardware
 
-We conducted tests in the paper using `Intel(R) Xeon(R) Gold 5218` CPUs. In fact, any hardware that supports AVX512 can be used for reproduction, but the sresult may not necessarily match the results presented in the paper.
+We conducted tests in the paper using `Intel(R) Xeon(R) Gold 5218` CPUs. In fact, any hardware that supports AVX512 can be used for reproduction, but the results may not necessarily match the results presented in the paper.
 
 ## Software Requirements
 
