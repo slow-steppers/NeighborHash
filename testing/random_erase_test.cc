@@ -6,7 +6,8 @@
 #include <random>         // for uniform_int_distribution
 #include <unordered_map>  // for unordered_map, operator!=
 
-#include "gtest/gtest.h"  // for Message, TestPartResult
+#include "absl/hash/hash.h"  // for Hash
+#include "gtest/gtest.h"     // for Message, TestPartResult
 
 #include "neighbor_hash/common_policy.h"  // for DefaultIntegerHash
 #include "neighbor_hash/neighbor_hash.h"  // for NeighborHashMap, operator!=
@@ -111,6 +112,15 @@ TEST_F(RandomErase32STest, Repeat21) {
   }
 }
 
+using RandomErase32ATest =
+    RandomEraseTest<uint32_t, uint32_t, absl::Hash<uint32_t>>;
+
+TEST_F(RandomErase32ATest, Repeat21) {
+  for (uint32_t p = 0; p < 21; ++p) {
+    RandomEraseSuiteOnce(p);
+  }
+}
+
 using RandomErase32DTest =
     RandomEraseTest<uint32_t, uint32_t, policy::DefaultIntegerHash>;
 
@@ -124,6 +134,15 @@ using RandomErase64STest =
     RandomEraseTest<uint64_t, uint64_t, std::hash<uint64_t>>;
 
 TEST_F(RandomErase64STest, Repeat21) {
+  for (uint32_t p = 0; p < 21; ++p) {
+    RandomEraseSuiteOnce(p);
+  }
+}
+
+using RandomErase64ATest =
+    RandomEraseTest<uint64_t, uint64_t, absl::Hash<uint64_t>>;
+
+TEST_F(RandomErase64ATest, Repeat21) {
   for (uint32_t p = 0; p < 21; ++p) {
     RandomEraseSuiteOnce(p);
   }

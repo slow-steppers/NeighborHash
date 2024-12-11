@@ -39,4 +39,6 @@ fi
 #   ARGUMENTS+=( --config="clang" )
 # fi
 
+echo "Options: ${ARGUMENTS[@]@Q} ${@@Q}" >&2
+
 exec "${BAZEL_BINARY}" build "${ARGUMENTS[@]}" "//testing:all" "${@}"
