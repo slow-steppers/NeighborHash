@@ -892,8 +892,7 @@ class alignas(64) NeighborHashMap {
   }
 
   explicit NeighborHashMap(size_t n) {
-    auto m = PolicyTraits::NormalizeCapacity(n);
-    auto capacity = m;
+    auto capacity = PolicyTraits::NormalizeCapacity(n);
     slot_type* slot = (slot_type*)PolicyTraits::template Allocate<
         hardware_constructive_interference_size>(
         sizeof(slot_type) * (capacity + 1));
