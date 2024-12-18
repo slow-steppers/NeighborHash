@@ -7,6 +7,7 @@ cc_library(
         "neighbor_hash/neighbor_hash.h",
         "neighbor_hash/slot_type.h",
     ],
+    linkstatic = True,
     visibility = ["//visibility:public"],
     deps = [
         "@com_google_absl//absl/base:core_headers",
