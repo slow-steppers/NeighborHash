@@ -1,6 +1,18 @@
+diff -u -N -r a/rules_boost/boost/boost.bzl b/rules_boost/boost/boost.bzl
+--- boost/boost.bzl	2021-07-17 11:53:36.000000000 +0800
++++ boost/boost.bzl	2025-01-06 21:26:59.190220889 +0800
+@@ -215,7 +215,7 @@
+         sha256 = "7bd7ddceec1a1dfdcbdb3e609b60d01739c38390a5f956385a12f3122049f0ca",
+         strip_prefix = "boost_1_76_0",
+         urls = [
+-            "https://boostorg.jfrog.io/artifactory/main/release/1.76.0/source/boost_1_76_0.tar.gz",
++            "https://archives.boost.io/release/1.76.0/source/boost_1_76_0.tar.gz",
+         ],
+     )
+ 
 diff -u -N -r a/rules_boost/BUILD.boost b/rules_boost/BUILD.boost
 --- BUILD.boost	2021-07-17 11:53:36.000000000 +0800
-+++ BUILD.boost	2024-12-11 00:17:04.304222200 +0800
++++ BUILD.boost	2025-01-06 21:26:59.190220889 +0800
 @@ -12,7 +12,7 @@
  config_setting(
      name = "linux",
@@ -155,7 +167,7 @@ diff -u -N -r a/rules_boost/BUILD.boost b/rules_boost/BUILD.boost
          ":bind",
 diff -u -N -r a/rules_boost/BUILD.lzma b/rules_boost/BUILD.lzma
 --- BUILD.lzma	2021-07-17 11:53:36.000000000 +0800
-+++ BUILD.lzma	2024-12-11 00:14:32.364215959 +0800
++++ BUILD.lzma	2025-01-06 21:26:59.190220889 +0800
 @@ -6,33 +6,33 @@
  
  config_setting(
@@ -199,7 +211,7 @@ diff -u -N -r a/rules_boost/BUILD.lzma b/rules_boost/BUILD.lzma
  copy_file(
 diff -u -N -r a/rules_boost/BUILD.zstd b/rules_boost/BUILD.zstd
 --- BUILD.zstd	2021-07-17 11:53:36.000000000 +0800
-+++ BUILD.zstd	2024-12-11 00:14:32.364215959 +0800
++++ BUILD.zstd	2025-01-06 21:26:59.190220889 +0800
 @@ -233,6 +233,6 @@
  config_setting(
      name = "windows",
